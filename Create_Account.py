@@ -3,7 +3,8 @@ import Main as ms
 import pyodbc
 import hashlib
 import Validations as vl
-import base64 as b64
+import base64
+
 database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
                           'Server= MICHAEL-PC\SQLSSIS;'
                           'Database=Python_DB;'
@@ -43,31 +44,30 @@ def password_check(password):
     return 0
 
 
-def password_hash(password):
+def password_encode(password):
     try:
-        hash_val = hashlib.sha1()
-        hash_val.update(password.encode('utf-8'))
-        password_hash = hash_val.hexdigest()
-        return password_hash
+        password_encode_value = base64.b64encode(password)
+        print(f'b64 {password_encode_value}')
+        return password_encode
     except:
-        sg.popup_error('Hashing Error', 'Unable to hash password, please try again later')
+        sg.popup_error('Encoding Error', 'Unable to encode password, please try again later')
 
 
-def account_creation(username, password_hash_val, f_name, l_name):
-    password_bytes = password_hash_val.encode('ascii')
-    b64_bytes = b64.b64encode(password_bytes)
+def account_creation(username, password_encoded_val, f_name, l_name):
 
-    print(f'username in account creation = {username} \n Hash value = {password_hash_val}')
-    print(type(password_hash_val))
-    print(f'base 64 value = {b64.encodebytes(b64_bytes)}')
-    print(f'base 64 ascii = {b64.encodebytes(b64_bytes).decode("ascii")}')
-    b641 = b64.encodebytes(b64_bytes)
-    b642 = b64.encodebytes(b64_bytes).decode("ascii")
+    #password_bytes = password_hash_val.encode('ascii')
+    #b64_bytes = b64.b64encode(password_bytes)
+
+    print(f'username in account creation = {username} \n Hash value = {password_encoded_val}')
+    print(type(password_encoded_val))
+
     cursor.execute("insert into dbo.User_Reminder(Username, PasswordHash, FirstName, LastName) values(?, "
-                   "? ?, ?)",
-                   username, b642, f_name, l_name)
+                   "?, ?, ?)",
+                   username, password_encoded_val, f_name, l_name)
 
     database.commit()
+
+    #print(b64.decodebytes(b641))
 
     ## fix error
 
@@ -121,10 +121,10 @@ def main():
 
             if (username_val_check == 0 and password_val_check == 0) and (
                     first_name_check > 0 and last_name_check > 0):
-                password_hash_value = password_hash(values['-PASSWORD-'])
+                password_encoded_value = password_encode(values['-PASSWORD-'])
                 username = values['-USERNAME-']
 
-                account_creation(username, password_hash_value, first_name, last_name)
+                account_creation(username, password_encoded_value, first_name, last_name)
 
                 window.FindElement('-USERNAME-').Update('')
                 window.FindElement('-PASSWORD-').Update('')
@@ -133,7 +133,9 @@ def main():
 
                 # sg.popup('Account Created', 'Your')
 
-            # insert hash value into DB
+            # insert hash value into DB - work out why Hash value is not working
+            # Loop to ensure that code doesn't insert on error
+            # Clear DB
 
 
 if __name__ == '__main__':
