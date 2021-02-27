@@ -20,11 +20,13 @@ def main():
     text_font = ('Sans', 15)
     layout = [
         [sg.Button('Back', font=button_font), sg.Text('Login', font=('Sans', 30), size=(1000, 1), justification='c')],
+        [sg.Text('')],
         [sg.Text('Username', font=text_font), sg.Input(key='-USERNAME-')],
         [sg.Text('Password', font=text_font), sg.Input(key='-PASSWORD-', password_char='*')],
-        [sg.Button('Login', font=text_font)]
+        [sg.Text('')],
+        [sg.Button('Login', font=text_font, size=(15, 1))]
     ]
-    window = sg.Window("login", layout, size=(300, 170), grab_anywhere=True, element_justification='C')
+    window = sg.Window("login", layout, size=(300,250), grab_anywhere=True, element_justification='C')
 
     while True:
         event, values = window.read()
