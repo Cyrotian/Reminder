@@ -1,7 +1,6 @@
 import PySimpleGUI as SG
 import Main as MS
 import pyodbc
-import hashlib
 import Validations as VL
 import base64
 
@@ -33,7 +32,7 @@ def password_check(password):
     if password_validation == -3:
         SG.popup_error('Password Error', 'Your password has to have more than 6 characters')
     elif password_validation == -4:
-        SG.popup_error('Password Error', 'YYour password has to contain a uppercase character')
+        SG.popup_error('Password Error', 'Your password has to contain a uppercase character')
     elif password_validation == -5:
         SG.popup_error('Password Error', 'Your password has to contain a lowercase character')
     elif password_validation == -6:
@@ -71,6 +70,7 @@ def main():
     SG.theme('DarkBlue1')
     button_font = ('Sans', 15)
     text_font = ('Sans', 15)
+    entry_field_size = (30, 5)
 
     # setting a layout
     layout = [
@@ -79,10 +79,10 @@ def main():
          SG.Text('Create Account', font=('Sans', 20), size=(1000, 1), justification='c')],
         [SG.Text('')],
         # Set keys to access/update the field later
-        [SG.Text('Username', font=text_font, size=(9, 1)), SG.Input(key='-USERNAME-', size=(30, 5))],
-        [SG.Text('Password', font=text_font, size=(9, 1)), SG.Input(key='-PASSWORD-', password_char='*', size=(30, 5))],
-        [SG.Text('First name', font=text_font, size=(9, 1)), SG.Input(key='-FIRSTNAME-', size=(30, 5))],
-        [SG.Text('Last name', font=text_font, size=(9, 1)), SG.Input(key='-LASTNAME-', size=(30, 5))],
+        [SG.Text('Username', font=text_font, size=(9, 1)), SG.Input(key='-USERNAME-', size=entry_field_size)],
+        [SG.Text('Password', font=text_font, size=(9, 1)), SG.Input(key='-PASSWORD-', password_char='*', size=entry_field_size)],
+        [SG.Text('First name', font=text_font, size=(9, 1)), SG.Input(key='-FIRSTNAME-', size=entry_field_size)],
+        [SG.Text('Last name', font=text_font, size=(9, 1)), SG.Input(key='-LASTNAME-', size=entry_field_size)],
         [SG.Text('')],
         [SG.Button('Create', font=text_font, size=(15, 1))]
     ]
@@ -99,7 +99,7 @@ def main():
             MS.main()
 
         if event == 'Create':
-            # checking the username
+            # checking the username and password
             username_val_check = username_check(values['-USERNAME-'])
             password_val_check = password_check(values['-PASSWORD-'])
 

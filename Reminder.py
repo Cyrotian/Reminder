@@ -1,8 +1,16 @@
 import PySimpleGUI as sg
-
+import pyodbc
 # Create the window
-sg.theme('DarkAmber')
 
+
+
+database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
+                          'Server= MICHAEL-PC\SQLSSIS;'
+                          'Database=Python_DB;'
+                          'Trusted_Connection=yes;')
+
+cursor = database.cursor()
+sg.theme('DarkAmber')
 layout = [
     [sg.Text('Test')],
     [sg.Input(), sg.Input()],
