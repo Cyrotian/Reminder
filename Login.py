@@ -2,6 +2,7 @@ import PySimpleGUI as SG
 import Main as MS
 import pyodbc
 import base64
+import Display_reminders as DR
 import validators as VL
 
 database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
@@ -56,13 +57,15 @@ def main():
 
             login_check = bool(login(values['-USERNAME-'], values['-PASSWORD-']))
             if login_check:
+                print("got here")
+                window.close()
+                DR.main(current_user=values['-USERNAME-'])
                 print("Success")
             else:
                 print("Failure")
                 window.FindElement('-USERNAME-').Update('')
                 window.FindElement('-PASSWORD-').Update('')
 
-            # check hash value agaist db
 
 
 if __name__ == '__main__':
