@@ -2,7 +2,7 @@ import PySimpleGUI as SG
 import Main as MS
 import pyodbc
 import base64
-import Display_reminders as DR
+import Display_Reminders as DR
 import validators as VL
 
 database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
@@ -16,7 +16,7 @@ cursor = database.cursor()
 # sg.preview_all_look_and_feel_themes()
 def login(username, password):
     db_password = base64.b64encode(password.encode('UTF-8')).decode()
-    cursor.execute("Select Username FROM Python_DB.dbo.User_Reminder WHERE Username = ? and PasswordEncode = ? ",
+    cursor.execute("Select Username FROM Python_DB.dbo.Reminder_users WHERE Username = ? and PasswordEncode = ? ",
                    username, db_password)
 
     result = len([username for values in cursor])

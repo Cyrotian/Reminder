@@ -14,17 +14,19 @@ cursor = database.cursor()
 
 def main(**kwargs):
     SG.theme('DarkBlue1')
-    SG.theme('DarkBlue1')
-    entry_field_size = (30, 5)
+    entry_field_size = (20, 5)
 
     button_font = ('Sans', 15)
     text_font = ('Sans', 15)
     layout = [
-        [SG.Button('Back', font=button_font),
-         SG.Text('Reminders', font=('Sans', 30), size=(1000, 1), justification='c')],
+        [SG.Text('Add New Reminder', font=('Sans', 30), size=(1000, 1), justification='c')],
         [SG.Text('')],
-
-        [SG.Text('')],
+        [SG.Text('Title', font=text_font), SG.Input(key='-TITLE-', size=entry_field_size)],
+        [SG.Text('Message', font=text_font), SG.Multiline(key='-MESSAGE-', size=(30, 5))],
+        [SG.Text('Frequency', font=text_font), SG.Combo(['Once', 'Daily', 'Weekly', 'Monthly', 'Annually'])],
+        [SG.Text('Start Date', font=text_font), SG.Input(key='-DATE-', size=entry_field_size,
+                                                         readonly=True, background_color='brown'),
+         SG.CalendarButton('Select Date', target='-DATE-', format='%d/%m/%Y')],
         [SG.Button('Create New', font=text_font, size=(15, 1))]
     ]
     window = SG.Window("Reminders", layout, size=(500, 500), grab_anywhere=True, element_justification='C')
@@ -36,6 +38,11 @@ def main(**kwargs):
 
         if event == 'Create New':
             SG.Popup(kwargs.get('current_user', None))
+            print(values['-DATE-'])
+
+        if event == 'Logout':
+            window.close()
+            MS.main()
 
 
 if __name__ == '__main__':

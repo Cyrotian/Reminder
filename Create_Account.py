@@ -56,7 +56,7 @@ def account_creation(username, password_encoded_val, f_name, l_name):
     print(f'username in account creation = {username} \n Hash value = {password_encoded_val}')
     print(type(password_encoded_val))
 
-    cursor.execute("insert into dbo.User_Reminder(Username, PasswordEncode, FirstName, LastName) values(?, "
+    cursor.execute("insert into dbo.Reminder_users(Username, PasswordEncode, FirstName, LastName) values(?, "
                    "?, ?, ?)",
                    username, password_encoded_val, f_name, l_name)
 
@@ -128,6 +128,7 @@ def main():
             # insert hash value into DB - work out why Hash value is not working
             # Loop to ensure that code doesn't insert on error
             # Clear DB
+            # Add  confirm password field  , check that it matches first field
 
 
 if __name__ == '__main__':

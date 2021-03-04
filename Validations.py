@@ -12,7 +12,7 @@ cursor = database.cursor()
 def username_validation(username):
     if len(username) < 6 or len(username) > 15:
         return -1
-    cursor.execute("Select Username FROM Python_DB.dbo.User_Reminder WHERE Username = ?", username)
+    cursor.execute("Select Username FROM Python_DB.dbo.Reminder_users WHERE Username = ?", username)
 
     user_count = 0
     for row in cursor:
