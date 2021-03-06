@@ -1,8 +1,7 @@
 import PySimpleGUI as SG
 import Main as MS
 import pyodbc
-import base64
-import validators as VL
+from Add_Reminders import main as AR
 
 database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
                           'Server= MICHAEL-PC\SQLSSIS;'
@@ -13,7 +12,7 @@ cursor = database.cursor()
 
 
 def main(**kwargs):
-    SG.theme('DarkBlue1')
+    current_user = kwargs.get('current_user', None)
     SG.theme('DarkBlue1')
     entry_field_size = (30, 5)
 
@@ -35,7 +34,8 @@ def main(**kwargs):
             break
 
         if event == 'Create New':
-            SG.Popup(kwargs.get('current_user', None))
+           #SG.Popup(kwargs.get('current_user', None))
+            AR(user=current_user)
 
         if event == 'Logout':
             window.close()
@@ -45,4 +45,3 @@ def main(**kwargs):
 if __name__ == '__main__':
     main()
     # call main from login like this: main(name  = username)
-

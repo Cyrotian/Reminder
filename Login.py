@@ -57,10 +57,8 @@ def main():
 
             login_check = bool(login(values['-USERNAME-'], values['-PASSWORD-']))
             if login_check:
-                print("got here")
                 window.close()
                 DR.main(current_user=values['-USERNAME-'])
-                print("Success")
             else:
                 print("Failure")
                 window.FindElement('-USERNAME-').Update('')
