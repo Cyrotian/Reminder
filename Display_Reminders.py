@@ -18,11 +18,16 @@ def main(**kwargs):
 
     button_font = ('Sans', 15)
     text_font = ('Sans', 15)
+
+    reminders = cursor.execute("Select Title, Message, Frequency_type, Start_date, Reminder_time from dbo.Reminders "
+                               "as r INNER JOIN dbo.Reminder_users as ru on r.User_id = "
+                               "ru.UserID WHERE ru.Username = ? ", current_user).fetchall()
+
     layout = [
         [SG.Button('Logout', font=button_font),
          SG.Text('Reminders', font=('Sans', 30), size=(1000, 1), justification='c')],
         [SG.Text('')],
-
+        [SG.Text(reminders)],
         [SG.Text('')],
         [SG.Button('Create New', font=text_font, size=(15, 1))]
     ]
@@ -32,6 +37,10 @@ def main(**kwargs):
         event, values = window.read()
         if event == SG.WIN_CLOSED:
             break
+
+
+
+
 
         if event == 'Create New':
            #SG.Popup(kwargs.get('current_user', None))

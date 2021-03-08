@@ -22,7 +22,6 @@ def login(username, password):
     result = len([username for values in cursor])
 
     if result == 1:
-        SG.popup_ok("Success", "it works")
         return True
     else:
         SG.popup_error("Failed Login", "Your username or password is incorrect, please try again")
@@ -60,7 +59,6 @@ def main():
                 window.close()
                 DR.main(current_user=values['-USERNAME-'])
             else:
-                print("Failure")
                 window.FindElement('-USERNAME-').Update('')
                 window.FindElement('-PASSWORD-').Update('')
 
