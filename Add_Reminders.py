@@ -1,5 +1,6 @@
 import PySimpleGUI as SG
 import Main as MS
+import Display_Reminders as DR
 import pyodbc
 import datetime
 
@@ -11,8 +12,10 @@ database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
 cursor = database.cursor()
 
 
-def db_insert(username, title, message, frequency, start_date, reminder_time, interval):
+# Screen layout - Pad
+# error with certain times
 
+def db_insert(username, title, message, frequency, start_date, reminder_time, interval):
     # selecting the user id from the database, this returns a list of tuples
     user = cursor.execute("SELECT UserID from dbo.Reminder_users WHERE Username = ? ", username).fetchall()
     # getting the actual user_id from the list of tuple
@@ -139,7 +142,7 @@ def main(**kwargs):
             # error field to show which field is empty
             error_field = ''
             for i in range(len(inserted_data)):
-                print(inserted_data[i])
+                # print(inserted_data[i])
                 if i == 0:
                     error_field = 'Title'
                 elif i == 1:
@@ -159,7 +162,7 @@ def main(**kwargs):
             # if there are no errors pass the variables to be inserted
             if not is_error:
                 db_insert(current_user, title, message, freq, date, time, interval)
-                print('no error')
+                DR.update_table(current_user=current_user)
 
         if event == 'Logout':
             window.close()
