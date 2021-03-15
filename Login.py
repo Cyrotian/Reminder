@@ -1,8 +1,8 @@
-import PySimpleGUI as SG
-import Main as MS
+import PySimpleGUI as sg
+import Main as ms
 import pyodbc
 import base64
-import Display_Reminders as DR
+import Display_Reminders as dr
 import validators as VL
 
 database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
@@ -24,40 +24,40 @@ def login(username, password):
     if result == 1:
         return True
     else:
-        SG.popup_error("Failed Login", "Your username or password is incorrect, please try again")
+        sg.popup_error("Failed Login", "Your username or password is incorrect, please try again")
         return False
 
 
 def main():
-    SG.theme('DarkBlue1')
+    sg.theme('DarkBlue1')
     entry_field_size = (30, 5)
 
     button_font = ('Sans', 15)
     text_font = ('Sans', 15)
     layout = [
-        [SG.Button('Back', font=button_font), SG.Text('Login', font=('Sans', 30), size=(1000, 1), justification='c')],
-        [SG.Text('')],
-        [SG.Text('Username', font=text_font), SG.Input(key='-USERNAME-', size=entry_field_size)],
-        [SG.Text('Password', font=text_font), SG.Input(key='-PASSWORD-', password_char='*', size=entry_field_size)],
-        [SG.Text('')],
-        [SG.Button('Login', font=text_font, size=(15, 1))]
+        [sg.Button('Back', font=button_font), sg.Text('Login', font=('Sans', 30), size=(1000, 1), justification='c')],
+        [sg.Text('')],
+        [sg.Text('Username', font=text_font), sg.Input(key='-USERNAME-', size=entry_field_size)],
+        [sg.Text('Password', font=text_font), sg.Input(key='-PASSWORD-', password_char='*', size=entry_field_size)],
+        [sg.Text('')],
+        [sg.Button('Login', font=text_font, size=(15, 1))]
     ]
-    window = SG.Window("login", layout, size=(300, 250), grab_anywhere=True, element_justification='C')
+    window = sg.Window("login", layout, size=(300, 250), grab_anywhere=True, element_justification='C')
 
     while True:
         event, values = window.read()
-        if event == "Exit" or event == SG.WIN_CLOSED:
+        if event == "Exit" or event == sg.WIN_CLOSED:
             break
         if event == 'Back':
             window.close()
-            MS.main()
+            ms.main()
 
         if event == 'Login':
 
             login_check = bool(login(values['-USERNAME-'], values['-PASSWORD-']))
             if login_check:
                 window.close()
-                DR.main(current_user=values['-USERNAME-'])
+                dr.main(current_user=values['-USERNAME-'])
             else:
                 window.FindElement('-USERNAME-').Update('')
                 window.FindElement('-PASSWORD-').Update('')

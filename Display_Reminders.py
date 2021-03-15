@@ -1,7 +1,7 @@
-import PySimpleGUI as SG
-import Main as MS
+import PySimpleGUI as sg
+import Main as ms
 import pyodbc
-from Add_Reminders import main as AR
+from Add_Reminders import main as ar
 
 database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
                           'Server= MICHAEL-PC\SQLSSIS;'
@@ -36,7 +36,7 @@ def delete_reminder(current_user, selected_row, reminder, window):
     db_id = reminder[selected_row][5]
     title = reminder[selected_row][0]
 
-    confirm = SG.popup_yes_no('Confirm Delete', f'Are you sure you want to delete {title}', keep_on_top=True)
+    confirm = sg.popup_yes_no('Confirm Delete', f'Are you sure you want to delete {title}', keep_on_top=True)
     if confirm == "Yes":
         cursor.execute("delete from dbo.Reminders where id = ?", db_id)
         database.commit()
@@ -46,7 +46,7 @@ def delete_reminder(current_user, selected_row, reminder, window):
 def main(**kwargs):
     current_user = 'Mikko123'
     # kwargs.get('current_user')
-    SG.theme('DarkBlue1')
+    sg.theme('DarkBlue1')
     entry_field_size = (30, 5)
 
     button_font = ('Sans', 15)
@@ -56,43 +56,45 @@ def main(**kwargs):
     header_list = ['Title', 'Message', 'Frequency', 'Start Date', 'Reminder Time']
 
     reminder_list = get_dbvalues(current_user)
+    if len(reminder_list) < 1:
+        reminder_list = [['' for _ in range(len(header_list))]]
 
     layout = [
-        [SG.Button('Logout', font=button_font),
-         SG.Text('Reminders', font=('Sans', 30), size=(1000, 1), justification='c')],
-        [SG.T('')],
-        [SG.Table(values=reminder_list, headings=header_list, display_row_numbers=True, justification='c',
+        [sg.Button('Logout', font=button_font),
+         sg.Text('Reminders', font=('Sans', 30), size=(1000, 1), justification='c')],
+        [sg.T('')],
+        [sg.Table(values=reminder_list, headings=header_list, display_row_numbers=True, justification='c',
                   auto_size_columns=True, row_height=25, max_col_width=10, enable_events=True, key='-TABLE-')],
-        [SG.T('')],
-        [SG.Button('Delete Reminder', font=text_font, size=(15, 1))],
-        [SG.T('')],
-        [SG.Button('Create New', font=text_font, size=(15, 1))]
+        [sg.T('')],
+        [sg.Button('Delete Reminder', font=text_font, size=(15, 1))],
+        [sg.T('')],
+        [sg.Button('Create New', font=text_font, size=(15, 1))]
 
     ]
-    window = SG.Window("Reminders", layout, size=(500, 550), element_justification='C')
+    window = sg.Window("Reminders", layout, size=(500, 550), element_justification='C')
     selected_row = -1
 
     while True:
         event, values = window.read()
 
-        if event == SG.WIN_CLOSED:
+        if event == sg.WIN_CLOSED:
             break
 
         if event == 'Create New':
             # SG.Popup(kwargs.get('current_user', None))
-            AR(user=current_user)
+            ar(user=current_user)
             update_table()
 
         if event == 'Logout':
             window.close()
-            MS.main()
+            ms.main()
 
         if event == '-TABLE-':
             selected_row = values['-TABLE-'][0]
 
         if event == 'Delete Reminder':
             if selected_row == -1:
-                SG.PopupError('Select row', 'No row has been selected for deletion')
+                sg.PopupError('Select row', 'No row has been selected for deletion')
             else:
                 delete_reminder(current_user, selected_row, reminder_list, window)
 
@@ -102,3 +104,4 @@ def main(**kwargs):
 
 if __name__ == '__main__':
     main()
+    cursor.close()

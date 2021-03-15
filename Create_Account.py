@@ -1,7 +1,7 @@
-import PySimpleGUI as SG
-import Main as MS
+import PySimpleGUI as sg
+import Main as ms
 import pyodbc
-import Validations as VL
+import Validations as vl
 import base64
 
 database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
@@ -15,30 +15,30 @@ cursor = database.cursor()
 # sg.preview_all_look_and_feel_themes()
 
 def username_check(username):
-    username_validation = VL.username_validation(username)
+    username_validation = vl.username_validation(username)
 
     if username_validation == -1:
-        SG.popup_error('Username Error', 'Your username must have more 6 but less than 15 characters')
+        sg.popup_error('Username Error', 'Your username must have more 6 but less than 15 characters')
     elif username_validation == -2:
-        SG.popup_error('Username Error', 'That username is in use, please try another one')
+        sg.popup_error('Username Error', 'That username is in use, please try another one')
 
     return 0
 
 
 def password_check(password):
-    password_validation = VL.password_validation(password)
+    password_validation = vl.password_validation(password)
     print(password_validation)
 
     if password_validation == -3:
-        SG.popup_error('Password Error', 'Your password has to have more than 6 characters')
+        sg.popup_error('Password Error', 'Your password has to have more than 6 characters')
     elif password_validation == -4:
-        SG.popup_error('Password Error', 'Your password has to contain a uppercase character')
+        sg.popup_error('Password Error', 'Your password has to contain a uppercase character')
     elif password_validation == -5:
-        SG.popup_error('Password Error', 'Your password has to contain a lowercase character')
+        sg.popup_error('Password Error', 'Your password has to contain a lowercase character')
     elif password_validation == -6:
-        SG.popup_error('Password Error', 'Your password has to contain a number')
+        sg.popup_error('Password Error', 'Your password has to contain a number')
     elif password_validation == -7:
-        SG.popup_error('Password Error', 'Your password has to contain a special character($#@!)')
+        sg.popup_error('Password Error', 'Your password has to contain a special character($#@!)')
 
     return 0
 
@@ -67,7 +67,7 @@ def account_creation(username, password_encoded_val, f_name, l_name):
 
 def main():
     # setting a theme
-    SG.theme('DarkBlue1')
+    sg.theme('DarkBlue1')
     button_font = ('Sans', 15)
     text_font = ('Sans', 15)
     entry_field_size = (30, 5)
@@ -75,28 +75,28 @@ def main():
     # setting a layout
     layout = [
         # each list within this list can be seen a line on the gui
-        [SG.Button('Back', font=button_font),
-         SG.Text('Create Account', font=('Sans', 20), size=(1000, 1), justification='c')],
-        [SG.Text('')],
+        [sg.Button('Back', font=button_font),
+         sg.Text('Create Account', font=('Sans', 20), size=(1000, 1), justification='c')],
+        [sg.Text('')],
         # Set keys to access/update the field later
-        [SG.Text('Username', font=text_font, size=(9, 1)), SG.Input(key='-USERNAME-', size=entry_field_size)],
-        [SG.Text('Password', font=text_font, size=(9, 1)), SG.Input(key='-PASSWORD-', password_char='*', size=entry_field_size)],
-        [SG.Text('First name', font=text_font, size=(9, 1)), SG.Input(key='-FIRSTNAME-', size=entry_field_size)],
-        [SG.Text('Last name', font=text_font, size=(9, 1)), SG.Input(key='-LASTNAME-', size=entry_field_size)],
-        [SG.Text('')],
-        [SG.Button('Create', font=text_font, size=(15, 1))]
+        [sg.Text('Username', font=text_font, size=(9, 1)), sg.Input(key='-USERNAME-', size=entry_field_size)],
+        [sg.Text('Password', font=text_font, size=(9, 1)), sg.Input(key='-PASSWORD-', password_char='*', size=entry_field_size)],
+        [sg.Text('First name', font=text_font, size=(9, 1)), sg.Input(key='-FIRSTNAME-', size=entry_field_size)],
+        [sg.Text('Last name', font=text_font, size=(9, 1)), sg.Input(key='-LASTNAME-', size=entry_field_size)],
+        [sg.Text('')],
+        [sg.Button('Create', font=text_font, size=(15, 1))]
     ]
 
     # Window is required to display the layout
-    window = SG.Window("Create Account", layout, size=(300, 300), grab_anywhere=True, element_justification='C')
+    window = sg.Window("Create Account", layout, size=(300, 300), grab_anywhere=True, element_justification='C')
 
     while True:
         event, values = window.read()
-        if event == "Exit" or event == SG.WIN_CLOSED:
+        if event == "Exit" or event == sg.WIN_CLOSED:
             break
         if event == 'Back':
             window.close()
-            MS.main()
+            ms.main()
 
         if event == 'Create':
             # checking the username and password
@@ -107,9 +107,9 @@ def main():
             last_name_check = len(values['-LASTNAME-'])
 
             if first_name_check == 0:
-                SG.popup_error('Empty field', 'Your name cannot be empty')
+                sg.popup_error('Empty field', 'Your name cannot be empty')
             elif last_name_check == 0:
-                SG.popup_error('Empty field', 'Your password cannot be empty')
+                sg.popup_error('Empty field', 'Your password cannot be empty')
 
             if (username_val_check == 0 and password_val_check == 0) and (
                     first_name_check > 0 and last_name_check > 0):

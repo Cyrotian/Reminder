@@ -1,33 +1,22 @@
-import PySimpleGUI as sg
-import pyodbc
-# Create the window
+def twoSum(nums, target):
+    """
+    :type nums: List[int]
+    :type target: int
+    :rtype: List[int]
+    """
+    return_list = []
+    print(return_list)
+    check_val  = 0
+
+    for i in range(len(nums)):
+        check_val = check_val + nums[i]
+        print(nums[i])
+        remain = target - check_val
+        
+        if remain in nums:
+            if nums.index(remain) != nums[i]:
+                print(f'remin index  = {nums.index(remain)}')
+                return_list.extend([i,nums.index(remain)])
 
 
-
-database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
-                          'Server= MICHAEL-PC\SQLSSIS;'
-                          'Database=Python_DB;'
-                          'Trusted_Connection=yes;')
-
-cursor = database.cursor()
-sg.theme('DarkAmber')
-layout = [
-    [sg.Text('Test')],
-    [sg.Input(), sg.Input()],
-    [sg.Button('Button'), sg.Button('Exit')]
-]
-window = sg.Window("Demo", layout, grab_anywhere=True)
-# Create an event loop
-while True:
-    event, values = window.read()
-    # End program if user closes window or
-    # presses the OK button
-    print(event, values)
-    if event == "Button":
-        for value in values:
-            print(values.get(value))
-
-    if event == "Exit" or event == sg.WIN_CLOSED:
-        break
-
-window.close()
+twoSum([2,7,11,15], 9)

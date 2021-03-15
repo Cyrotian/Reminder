@@ -1,8 +1,8 @@
-import PySimpleGUI as SG
-import Main as MS
+import PySimpleGUI as sg
+import Main as ms
 import Display_Reminders as DR
 import pyodbc
-import datetime
+import datetime as dt
 
 database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
                           'Server= MICHAEL-PC\SQLSSIS;'
@@ -22,10 +22,13 @@ def db_insert(username, title, message, frequency, start_date, reminder_time, in
     user_id = user[0][0]
 
     # adding the data into the database table
+
+    reminder_time = "'" + str(reminder_time) + "'"
+    print(reminder_time)
     cursor.execute("Insert into dbo.Reminders(User_id, Title, Message, Frequency_type, Frequency_interval, "
-                   "Start_date, Reminder_time, Date_created, Active_user) "
-                   "values(?,?,?,?,?,?,?,?,?)", user_id, title, message, frequency, interval, start_date,
-                   reminder_time, datetime.datetime.now(), 1)
+                   "Start_date, Reminder_time,Date_created, Active_user) "
+                   "values(?,?,?,?,?,?,convert(varchar(7),CAST(? as time),8),?,?)", user_id, title, message, frequency, interval, start_date,
+                   reminder_time, dt.datetime.now(), 1)
 
     # updating the fields to ensure that only the user logged in has an active reminder
     cursor.execute("Update dbo.Reminders set Active_user = 1 where User_id = ?", user_id)
@@ -36,22 +39,22 @@ def db_insert(username, title, message, frequency, start_date, reminder_time, in
 
 
 def main(**kwargs):
-    SG.theme('DarkBlue1')
+    sg.theme('DarkBlue1')
     entry_field_size = (20, 5)
     button_font = ('Sans', 15)
     text_font = ('Sans', 15)
     layout = [
-        [SG.Text('Add New Reminder', font=('Sans', 30), size=(1000, 1), justification='c')],
-        [SG.Text('')],
-        [SG.Text('Title', font=text_font), SG.Input(key='-TITLE-', size=entry_field_size)],
-        [SG.Text('Message', font=text_font), SG.Multiline(key='-MESSAGE-', size=(30, 5))],
-        [SG.Text('Frequency', font=text_font), SG.Combo(['Once', 'Daily', 'Weekly', 'Monthly', 'Annually'],
+        [sg.Text('Add New Reminder', font=('Sans', 30), size=(1000, 1), justification='c')],
+        [sg.Text('')],
+        [sg.Text('Title', font=text_font), sg.Input(key='-TITLE-', size=entry_field_size)],
+        [sg.Text('Message', font=text_font), sg.Multiline(key='-MESSAGE-', size=(30, 5))],
+        [sg.Text('Frequency', font=text_font), sg.Combo(['Once', 'Daily', 'Weekly', 'Monthly', 'Annually'],
                                                         readonly=True, key='-FREQ-')],
-        [SG.Text('Start Date', font=text_font), SG.Input(key='-DATE-', size=entry_field_size,
+        [sg.Text('Start Date', font=text_font), sg.Input(key='-DATE-', size=entry_field_size,
                                                          readonly=True, text_color='black'),
-         SG.CalendarButton('Select Date', target='-DATE-', format='%d-%m-%Y')],
+         sg.CalendarButton('Select Date', target='-DATE-', format='%d-%m-%Y')],
         # list of times
-        [SG.Text('Time(24Hr Clock)', font=text_font), SG.Combo([
+        [sg.Text('Time(24Hr Clock)', font=text_font), sg.Combo([
             '00:00',
             '00:30',
             '01:00',
@@ -102,15 +105,16 @@ def main(**kwargs):
             '23:30'
         ], key='-TIME-', readonly=True)],
 
-        [SG.Button('Create New', font=text_font, size=(15, 1))]
+        [sg.Button('Create New', font=text_font, size=(15, 1))]
     ]
-    window = SG.Window("Reminders", layout, size=(500, 500), element_justification='C')
+    window = sg.Window("Reminders", layout, size=(500, 500), element_justification='C')
+
 
     while True:
         event, values = window.read()
         inserted_data = []
 
-        if event == SG.WIN_CLOSED:
+        if event == sg.WIN_CLOSED:
             break
 
         if event == 'Create New':
@@ -156,17 +160,19 @@ def main(**kwargs):
 
                 # when message field is empty it has \n as the default value
                 if inserted_data[i] == '' or inserted_data[i] == '\n':
-                    SG.PopupError('Empty Field', f'{error_field} field cannot be empty')
+                    sg.PopupError('Empty Field', f'{error_field} field cannot be empty')
                     is_error = True
                     break
             # if there are no errors pass the variables to be inserted
             if not is_error:
+                #time = time.replace(':', '')
+                #print(type (time))
                 db_insert(current_user, title, message, freq, date, time, interval)
-                DR.update_table(current_user=current_user)
+                #DR.update_table(current_user=current_user)
 
         if event == 'Logout':
             window.close()
-            MS.main()
+            ms.main()
 
 
 if __name__ == '__main__':
