@@ -22,15 +22,13 @@ def db_insert(username, title, message, frequency, start_date, reminder_time, in
     user_id = user[0][0]
 
     # adding the data into the database table
+    # converting start date from dd-mm-yyyy to yyyy-mm-dd for db insert
+    start_date = dt.datetime.strptime(start_date, '%d-%m-%Y').isoformat()
 
-    reminder_time = dt.datetime.strptime(reminder_time, "%H:%M")
-    #reminder_time = reminder_time.strftime("%H:%M:%S")
-    print(reminder_time)
     cursor.execute("Insert into dbo.Reminders(User_id, Title, Message, Frequency_type, Frequency_interval, "
-                   "Start_date, Reminder_time,Date_created, Active_user) "
-                   "values(?,?,?,?,?,?,CAST(? AS  datetime) ,?,?)", user_id, title, message, frequency,
-                   interval, start_date,
-                   reminder_time, dt.datetime.now(), 1)
+                   "Start_date, Reminder_time, Active_user) "
+                   "values(?,?,?,?,?,?,?,?)", user_id, title, message, frequency,
+                   interval, start_date, reminder_time, 1)
 
     # updating the fields to ensure that only the user logged in has an active reminder
     cursor.execute("Update dbo.Reminders set Active_user = 1 where User_id = ?", user_id)
@@ -122,10 +120,10 @@ def main(**kwargs):
                     break
             # if there are no errors pass the variables to be inserted
             if not is_error:
-                # time = time.replace(':', '')
-                # print(type (time))
                 db_insert(current_user, title, message, freq, date, time, interval)
-                # DR.update_table(current_user=current_user)
+                # getting window from display reminders and passing it back into display reminders
+                DR.update_table(current_user=current_user, window=kwargs.get('window'))
+                window.close()
 
         if event == 'Logout':
             window.close()

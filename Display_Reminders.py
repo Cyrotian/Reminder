@@ -26,9 +26,10 @@ def get_dbvalues(current_user):
 def update_table(**kwargs):
     window = kwargs.get('window')
     current_user = kwargs.get('current_user')
-    #if window is None:
-
-    window.Element('-TABLE-').Update(values=get_dbvalues(current_user))
+    try:
+        window.Element('-TABLE-').Update(values=get_dbvalues(current_user))
+    except AttributeError:
+        print('')
 
 
 def delete_reminder(current_user, selected_row, reminder, window):
@@ -40,6 +41,7 @@ def delete_reminder(current_user, selected_row, reminder, window):
     if confirm == "Yes":
         cursor.execute("delete from dbo.Reminders where id = ?", db_id)
         database.commit()
+        # passing window into add reminders so that table can be updated
         update_table(current_user=current_user, window=window)
 
 
@@ -57,6 +59,7 @@ def main(**kwargs):
 
     reminder_list = get_dbvalues(current_user)
     if len(reminder_list) < 1:
+        # list of empty values to display table it there are no reminders
         reminder_list = [['' for _ in range(len(header_list))]]
 
     layout = [
@@ -82,7 +85,7 @@ def main(**kwargs):
 
         if event == 'Create New':
             # SG.Popup(kwargs.get('current_user', None))
-            ar(user=current_user)
+            ar(user=current_user, window=window)
             update_table()
 
         if event == 'Logout':

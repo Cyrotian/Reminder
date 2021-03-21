@@ -14,6 +14,7 @@ cursor = database.cursor()
 
 
 # sg.preview_all_look_and_feel_themes()
+#UPDATE ALL REMINDERS SET ACTIOVE USER TO 1 IF LOGIN IS SUCESSFULL
 def login(username, password):
     db_password = base64.b64encode(password.encode('UTF-8')).decode()
     cursor.execute("Select Username FROM Python_DB.dbo.Reminder_users WHERE Username = ? and PasswordEncode = ? ",
