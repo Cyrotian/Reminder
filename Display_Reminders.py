@@ -26,10 +26,7 @@ def get_dbvalues(current_user):
 def update_table(**kwargs):
     window = kwargs.get('window')
     current_user = kwargs.get('current_user')
-    try:
-        window.Element('-TABLE-').Update(values=get_dbvalues(current_user))
-    except AttributeError:
-        print('')
+    window.Element('-TABLE-').Update(values=get_dbvalues(current_user))
 
 
 def delete_reminder(current_user, selected_row, reminder, window):
@@ -58,23 +55,23 @@ def main(**kwargs):
     header_list = ['Title', 'Message', 'Frequency', 'Start Date', 'Reminder Time']
 
     reminder_list = get_dbvalues(current_user)
-    if len(reminder_list) < 1:
+  #  if len(reminder_list) < 1:
         # list of empty values to display table it there are no reminders
-        reminder_list = [['' for _ in range(len(header_list))]]
+    #    reminder_list = [['' for _ in range(len(header_list))]]
 
     layout = [
         [sg.Button('Logout', font=button_font),
          sg.Text('Reminders', font=('Sans', 30), size=(1000, 1), justification='c')],
         [sg.T('')],
         [sg.Table(values=reminder_list, headings=header_list, display_row_numbers=True, justification='c',
-                  auto_size_columns=True, row_height=25, max_col_width=10, enable_events=True, key='-TABLE-')],
+                  auto_size_columns=False, row_height=25, col_widths=[5], enable_events=True, key='-TABLE-')],
         [sg.T('')],
         [sg.Button('Delete Reminder', font=text_font, size=(15, 1))],
         [sg.T('')],
         [sg.Button('Create New', font=text_font, size=(15, 1))]
 
     ]
-    window = sg.Window("Reminders", layout, size=(500, 550), element_justification='C')
+    window = sg.Window("Reminders", layout, size=(650, 550), element_justification='C')
     selected_row = -1
 
     while True:
@@ -84,9 +81,8 @@ def main(**kwargs):
             break
 
         if event == 'Create New':
-            # SG.Popup(kwargs.get('current_user', None))
             ar(user=current_user, window=window)
-            update_table()
+            update_table(current_user=current_user, window=window)
 
         if event == 'Logout':
             window.close()
@@ -99,6 +95,7 @@ def main(**kwargs):
             if selected_row == -1:
                 sg.PopupError('Select row', 'No row has been selected for deletion')
             else:
+                reminder_list = get_dbvalues(current_user)
                 delete_reminder(current_user, selected_row, reminder_list, window)
 
             # print(selected_row)
