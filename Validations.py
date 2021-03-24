@@ -24,7 +24,7 @@ def username_validation(username):
     return 0
 
 
-def password_validation(password):
+def password_validation(password, password2=''):
     if len(password) < 6:
         return -3
     # Using re.search to find the values expected in a password
@@ -36,5 +36,9 @@ def password_validation(password):
         return -6
     elif not re.search("[$#@!]", password):
         return -7
+
+    # checking that password2 matches password
+    if password2 != '' and (password2 != password):
+        return -8
 
     return 0

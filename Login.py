@@ -20,7 +20,7 @@ def login(username, password):
     cursor.execute("Select Username FROM Python_DB.dbo.Reminder_users WHERE Username = ? and PasswordEncode = ? ",
                    username, db_password)
 
-    result = len([username for values in cursor])
+    result = len([username for _ in cursor])
 
     if result == 1:
         return True

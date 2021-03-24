@@ -11,9 +11,9 @@ database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
 cursor = database.cursor()
 
 
-# change start date to last run
-# update table when user creates/deletes reminders
-# add delete icon
+# change start date to last run - use isnull to prevent errors
+# show user first name on screen
+
 
 def get_dbvalues(current_user):
     reminders = cursor.execute("Select Title, Message, Frequency_type, CONVERT(varchar(10),Start_date, 103) AS 'Start "
@@ -63,7 +63,7 @@ def main(**kwargs):
         [sg.Button('Logout', font=button_font),
          sg.Text('Reminders', font=('Sans', 30), size=(1000, 1), justification='c')],
         [sg.T('')],
-        [sg.Table(values=reminder_list, headings=header_list, display_row_numbers=True, justification='c',
+        [sg.Table(values=reminder_list, headings=header_list,display_row_numbers=True, justification='c',
                   auto_size_columns=False, row_height=25, col_widths=[5], enable_events=True, key='-TABLE-')],
         [sg.T('')],
         [sg.Button('Delete Reminder', font=text_font, size=(15, 1))],

@@ -12,6 +12,8 @@ database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
 cursor = database.cursor()
 
 
+# finish password confirmation
+# pop to show that account has been created, possibly ask if they want to login
 # sg.preview_all_look_and_feel_themes()
 
 def username_check(username):
@@ -25,9 +27,9 @@ def username_check(username):
     return 0
 
 
-def password_check(password):
-    password_validation = vl.password_validation(password)
-    print(password_validation)
+def password_check(password, password2=''):
+    password_validation = vl.password_validation(password, password2)
+    print(password2)
 
     if password_validation == -3:
         sg.popup_error('Password Error', 'Your password has to have more than 6 characters')
@@ -39,30 +41,25 @@ def password_check(password):
         sg.popup_error('Password Error', 'Your password has to contain a number')
     elif password_validation == -7:
         sg.popup_error('Password Error', 'Your password has to contain a special character($#@!)')
-
+    elif password_validation == -8:
+        sg.popup_error('Password Error', 'Your password must match')
     return 0
 
 
 def password_encode(password):
-
+    # Encoding password in base64
     password_encode_value = base64.b64encode(password.encode('UTF-8'))
     return password_encode_value.decode()
 
 
 def account_creation(username, password_encoded_val, f_name, l_name):
-    # password_bytes = password_hash_val.encode('ascii')
-    # b64_bytes = b64.b64encode(password_bytes)
-
-    print(f'username in account creation = {username} \n Hash value = {password_encoded_val}')
-    print(type(password_encoded_val))
+    # Creating user details on the database
 
     cursor.execute("insert into dbo.Reminder_users(Username, PasswordEncode, FirstName, LastName) values(?, "
                    "?, ?, ?)",
                    username, password_encoded_val, f_name, l_name)
 
     database.commit()
-
-    # print(b64.decodebytes(b641))
 
 
 def main():
@@ -80,7 +77,10 @@ def main():
         [sg.Text('')],
         # Set keys to access/update the field later
         [sg.Text('Username', font=text_font, size=(9, 1)), sg.Input(key='-USERNAME-', size=entry_field_size)],
-        [sg.Text('Password', font=text_font, size=(9, 1)), sg.Input(key='-PASSWORD-', password_char='*', size=entry_field_size)],
+        [sg.Text('Password', font=text_font, size=(9, 1)),
+         sg.Input(key='-PASSWORD-', password_char='*', size=entry_field_size)],
+        [sg.Text('Confirm Password', font=text_font, size=(9, 1)),
+         sg.Input(key='-PASSWORD2-', password_char='*', size=entry_field_size)],
         [sg.Text('First name', font=text_font, size=(9, 1)), sg.Input(key='-FIRSTNAME-', size=entry_field_size)],
         [sg.Text('Last name', font=text_font, size=(9, 1)), sg.Input(key='-LASTNAME-', size=entry_field_size)],
         [sg.Text('')],
@@ -88,7 +88,7 @@ def main():
     ]
 
     # Window is required to display the layout
-    window = sg.Window("Create Account", layout, size=(300, 300), grab_anywhere=True, element_justification='C')
+    window = sg.Window("Create Account", layout, size=(450, 350), grab_anywhere=True, element_justification='C')
 
     while True:
         event, values = window.read()
@@ -101,7 +101,7 @@ def main():
         if event == 'Create':
             # checking the username and password
             username_val_check = username_check(values['-USERNAME-'])
-            password_val_check = password_check(values['-PASSWORD-'])
+            password_val_check = password_check(values['-PASSWORD-'], values['-PASSWORD2-'])
 
             first_name_check = len(values['-FIRSTNAME-'])
             last_name_check = len(values['-LASTNAME-'])
@@ -120,15 +120,9 @@ def main():
 
                 window.FindElement('-USERNAME-').Update('')
                 window.FindElement('-PASSWORD-').Update('')
+                window.FindElement('-PASSWORD2-').Update('')
                 window.FindElement('-FIRSTNAME-').Update('')
                 window.FindElement('-LASTNAME-').Update('')
-
-                # sg.popup('Account Created', 'Your')
-
-            # insert hash value into DB - work out why Hash value is not working
-            # Loop to ensure that code doesn't insert on error
-            # Clear DB
-            # Add  confirm password field  , check that it matches first field
 
 
 if __name__ == '__main__':
