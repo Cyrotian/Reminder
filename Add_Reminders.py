@@ -13,7 +13,7 @@ cursor = database.cursor()
 
 
 # Screen layout - Pad
-# error with certain times
+# reduce message box field size
 
 def db_insert(username, title, message, frequency, start_date, reminder_time, interval):
     # selecting the user id from the database, this returns a list of tuples

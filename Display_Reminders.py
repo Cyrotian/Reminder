@@ -13,7 +13,7 @@ cursor = database.cursor()
 
 # change start date to last run - use isnull to prevent errors
 # show user first name on screen
-
+# create new screen for names - check if it is the user first tine logging in
 
 def get_dbvalues(current_user):
     reminders = cursor.execute("Select Title, Message, Frequency_type, CONVERT(varchar(10),Start_date, 103) AS 'Start "
