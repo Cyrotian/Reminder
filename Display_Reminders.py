@@ -30,7 +30,7 @@ def update_table(**kwargs):
 
 
 def delete_reminder(current_user, selected_row, reminder, window):
-    # print(current_user, selected_row)
+
     db_id = reminder[selected_row][5]
     title = reminder[selected_row][0]
 
@@ -46,7 +46,6 @@ def main(**kwargs):
     current_user = 'Mikko123'
     # kwargs.get('current_user')
     sg.theme('DarkBlue1')
-    entry_field_size = (30, 5)
 
     button_font = ('Sans', 15)
     text_font = ('Sans', 15)
@@ -55,9 +54,6 @@ def main(**kwargs):
     header_list = ['Title', 'Message', 'Frequency', 'Start Date', 'Reminder Time']
 
     reminder_list = get_dbvalues(current_user)
-  #  if len(reminder_list) < 1:
-        # list of empty values to display table it there are no reminders
-    #    reminder_list = [['' for _ in range(len(header_list))]]
 
     layout = [
         [sg.Button('Logout', font=button_font),

@@ -20,7 +20,7 @@ def db_insert(username, title, message, frequency, start_date, reminder_time, in
     user = cursor.execute("SELECT UserID from dbo.Reminder_users WHERE Username = ? ", username).fetchall()
     # getting the actual user_id from the list of tuple
     user_id = user[0][0]
-
+    print(message)
     # adding the data into the database table
     # converting start date from dd-mm-yyyy to yyyy-mm-dd for db insert
     start_date = dt.datetime.strptime(start_date, '%d-%m-%Y').isoformat()
@@ -101,7 +101,6 @@ def main(**kwargs):
             # error field to show which field is empty
             error_field = ''
             for i in range(len(inserted_data)):
-                # print(inserted_data[i])
                 if i == 0:
                     error_field = 'Title'
                 elif i == 1:
