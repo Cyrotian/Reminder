@@ -62,7 +62,7 @@ def run_notification(title, message):
         title=title,
         msg=message,
         duration=5,
-        icon_path='.\\reminder.ico'
+        icon_path='.\\reminder_icon.ico'
     )
     # notification.notify(
     #     title=str(title),
