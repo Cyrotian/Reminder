@@ -14,13 +14,25 @@ cursor = database.cursor()
 
 
 # sg.preview_all_look_and_feel_themes()
-#UPDATE ALL REMINDERS SET ACTIOVE USER TO 1 IF LOGIN IS SUCESSFULL
+# UPDATE ALL REMINDERS SET ACTIVE USER TO 1 IF LOGIN IS SUCESSFULL
+def activate_reminder(username):
+    cursor.execute("update Reminders set Active_user = 1 from Reminders as r "
+                   "inner join reminder_users as ru on r.User_id = ru.UserID Where ru.Username = ?",
+                   username)
+
+    cursor.execute("update Reminders set Active_user = 0 from Reminders as r "
+                   "inner join reminder_users as ru on r.User_id = ru.UserID Where ru.Username != ?",
+                   username)
+
+    database.commit()
+
+
 def login(username, password):
     db_password = base64.b64encode(password.encode('UTF-8')).decode()
     cursor.execute("Select Username FROM Python_DB.dbo.Reminder_users WHERE Username = ? and PasswordEncode = ? ",
                    username, db_password)
 
-    result = len([username for _ in cursor])
+    result = len([_ for _ in cursor])
 
     if result == 1:
         return True
@@ -57,12 +69,12 @@ def main():
 
             login_check = bool(login(values['-USERNAME-'], values['-PASSWORD-']))
             if login_check:
+                activate_reminder(values['-USERNAME-'])
                 window.close()
                 dr.main(current_user=values['-USERNAME-'])
             else:
                 window.FindElement('-USERNAME-').Update('')
                 window.FindElement('-PASSWORD-').Update('')
-
 
 
 if __name__ == '__main__':

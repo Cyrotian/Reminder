@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import Main as ms
+import Login as lg
 import pyodbc
 import Validations as vl
 import base64
@@ -61,6 +62,7 @@ def account_creation(username, password_encoded_val, f_name, l_name):
 
     database.commit()
 
+    return  True
 
 def main():
     # setting a theme
@@ -116,13 +118,20 @@ def main():
                 password_encoded_value = password_encode(values['-PASSWORD-'])
                 username = values['-USERNAME-']
 
-                account_creation(username, password_encoded_value, values['-FIRSTNAME-'], values['-LASTNAME-'])
+                ac_sucess = account_creation(username, password_encoded_value, values['-FIRSTNAME-'], values['-LASTNAME-'])
 
-                window.FindElement('-USERNAME-').Update('')
-                window.FindElement('-PASSWORD-').Update('')
-                window.FindElement('-PASSWORD2-').Update('')
-                window.FindElement('-FIRSTNAME-').Update('')
-                window.FindElement('-LASTNAME-').Update('')
+                if ac_sucess:
+                    window.FindElement('-USERNAME-').Update('')
+                    window.FindElement('-PASSWORD-').Update('')
+                    window.FindElement('-PASSWORD2-').Update('')
+                    window.FindElement('-FIRSTNAME-').Update('')
+                    window.FindElement('-LASTNAME-').Update('')
+                    ans = sg.popup_ok("Your account has been successfully created")
+                    if ans == 'OK':
+                        window.close()
+                        lg.main()
+
+
 
 
 if __name__ == '__main__':

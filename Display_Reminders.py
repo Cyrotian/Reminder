@@ -17,7 +17,8 @@ cursor = database.cursor()
 
 def get_dbvalues(current_user):
     reminders = cursor.execute("Select Title, Message, Frequency_type, CONVERT(varchar(10),Start_date, 103) AS 'Start "
-                               "Date', Reminder_time, id from dbo.Reminders "
+                               "Date',CONVERT(varchar(10),Last_run, 103) AS 'Last "
+                               "Run',  Reminder_time,  id from dbo.Reminders "
                                "as r INNER JOIN dbo.Reminder_users as ru on r.User_id = "
                                "ru.UserID WHERE ru.Username = ? ", current_user).fetchall()
     return [list(row) for row in reminders]
@@ -30,8 +31,7 @@ def update_table(**kwargs):
 
 
 def delete_reminder(current_user, selected_row, reminder, window):
-
-    db_id = reminder[selected_row][5]
+    db_id = reminder[selected_row][6]
     title = reminder[selected_row][0]
 
     confirm = sg.popup_yes_no('Confirm Delete', f'Are you sure you want to delete {title}', keep_on_top=True)
@@ -43,15 +43,14 @@ def delete_reminder(current_user, selected_row, reminder, window):
 
 
 def main(**kwargs):
-    current_user = 'Mikko123'
-    # kwargs.get('current_user')
+    current_user = kwargs.get('current_user')
     sg.theme('DarkBlue1')
 
     button_font = ('Sans', 15)
     text_font = ('Sans', 15)
 
     # header for the table
-    header_list = ['Title', 'Message', 'Frequency', 'Start Date', 'Reminder Time']
+    header_list = ['Title', 'Message', 'Frequency', 'Start Date', 'Last Run', 'Reminder Time']
 
     reminder_list = get_dbvalues(current_user)
 
@@ -59,7 +58,7 @@ def main(**kwargs):
         [sg.Button('Logout', font=button_font),
          sg.Text('Reminders', font=('Sans', 30), size=(1000, 1), justification='c')],
         [sg.T('')],
-        [sg.Table(values=reminder_list, headings=header_list,display_row_numbers=True, justification='c',
+        [sg.Table(values=reminder_list, headings=header_list, display_row_numbers=True, justification='c',
                   auto_size_columns=False, row_height=25, col_widths=[5], enable_events=True, key='-TABLE-')],
         [sg.T('')],
         [sg.Button('Delete Reminder', font=text_font, size=(15, 1))],

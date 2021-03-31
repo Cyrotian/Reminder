@@ -26,32 +26,32 @@ cursor = database.cursor()
 
 
 def update_lastrun(reminder_id):
-    cursor.execute("Update Reminders SET last_run = Getdate() where id = ?", reminder_id)
+    cursor.execute("Update Reminders SET last_run = CAST(Getdate()AS DATE) where id = ?", reminder_id)
     cursor.commit()
 
 
 def get_runtime(title, message, freq_type, freq_int, start_date, last_run, reminder_time, id):
     # getting the time in "H:M" format
     current_date = dt.datetime.now().date()
-    current_time = dt.datetime.now().time().strftime("%H:%M")
-    current_run = last_run + dt.timedelta(days=freq_int)
+    current_time = dt.datetime.now().time().strftime("%H:%M:00")
 
+    # adding frequency interval to the last run to determine if this reminder is supposed to run today
     # if the reminder has run previously then use the last_run date
     if last_run is not None:
-        # adding frequency interval to the last run to determine if this reminder is supposed to run today
+        current_run = last_run + dt.timedelta(days=freq_int)
         # checking if the date and the time match up to show the notification
         if current_run == current_date and current_time == str(reminder_time):
             run_notification(title, message)
             update_lastrun(id)
+
     else:
         # if the reminder hasn't run before than use the start date
         if start_date == current_date and current_time == str(reminder_time):
             run_notification(title, message)
             update_lastrun(id)
 
-    if start_date or current_run == dt.datetime.now().date():
-        # if current_time == str(reminder_time):
-        run_notification(title, message)
+    # if start_date or current_run == dt.datetime.now().date():
+    #   run_notification(title, message)
 
 
 def run_notification(title, message):
@@ -60,7 +60,7 @@ def run_notification(title, message):
         title=title,
         msg=message,
         duration=7,
-        icon_path='.\\reminder_icon.ico'
+        icon_path='I:\\Phyton\\desktop_reminder\\reminder_icon.ico'
     )
     # notification.notify(
     #     title=str(title),

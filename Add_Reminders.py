@@ -20,7 +20,6 @@ def db_insert(username, title, message, frequency, start_date, reminder_time, in
     user = cursor.execute("SELECT UserID from dbo.Reminder_users WHERE Username = ? ", username).fetchall()
     # getting the actual user_id from the list of tuple
     user_id = user[0][0]
-    print(message)
     # adding the data into the database table
     # converting start date from dd-mm-yyyy to yyyy-mm-dd for db insert
     start_date = dt.datetime.strptime(start_date, '%d-%m-%Y').isoformat()
@@ -45,9 +44,10 @@ def main(**kwargs):
     text_font = ('Sans', 15)
     layout = [
         [sg.Text('Add New Reminder', font=('Sans', 30), size=(1000, 1), justification='c')],
+
         [sg.Text('')],
         [sg.Text('Title', font=text_font), sg.Input(key='-TITLE-', size=entry_field_size)],
-        [sg.Text('Message', font=text_font), sg.Multiline(key='-MESSAGE-', size=(30, 5))],
+        [sg.Text('Message', font=text_font), sg.Multiline(key='-MESSAGE-', size=(20, 2))],
         [sg.Text('Frequency', font=text_font), sg.Combo(['Once', 'Daily', 'Weekly', 'Monthly', 'Annually'],
                                                         readonly=True, key='-FREQ-')],
         [sg.Text('Start Date', font=text_font), sg.Input(key='-DATE-', size=entry_field_size,
@@ -63,7 +63,7 @@ def main(**kwargs):
 
         [sg.Button('Create New', font=text_font, size=(15, 1))]
     ]
-    window = sg.Window("Reminders", layout, size=(500, 500), element_justification='C')
+    window = sg.Window("Reminders", layout, size=(500, 350), element_justification='C')
 
     while True:
         event, values = window.read()
