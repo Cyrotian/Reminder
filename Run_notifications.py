@@ -5,7 +5,6 @@ import datetime as dt
 import time
 
 
-# add leeway to time + 3 minutes (sleep  for 3 mintues) time.sleep(seconds)
 database = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
                           'Server= MICHAEL-PC\SQLSSIS;'
                           'Database=Python_DB;'
